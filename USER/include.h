@@ -2,10 +2,6 @@
 #define  INCLUDE_H__
 
 
-#define  TEMP_FLAG   'c'
-#define  HUMI_FLAG   'd'
-#define  SQ_FLAG     'e'
-#define  HCSR_FLAG   'f'
 
 #include "sys.h"
 #include "delay.h"

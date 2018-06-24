@@ -4,7 +4,7 @@
 		自从一股逆风袭来，我亦能抗御八面来风，驾舟而行！
 		                                          ------WindDeTears
  *      Created on: 20180620
- *      @Author   : XJ
+ *      @Author   : XJ <winddetears.@163.com>
  *		@id       : WindDeTears
  *      @version  ：V1.0.0
  
@@ -36,29 +36,25 @@ void SYSTEM_Congfig_Init(void);
  
 int main(void)
 {	
+	u8 send[7] = {0}; 
+	send[0] = 0xff;
+	send[6] = 0xfe;
 	SYSTEM_Congfig_Init();
 	while(1)
 	{
 		dht11_read_data(&temp, &humi);
-		
+		send[1] = temp;
+		send[2] = humi;
 		adc_vaule = mq2_voltage();
 		sq_check = (float)((adc_vaule * 10) / 33) + 0.03;
 		data = (uint16_t)(sq_check * 1000);
-
-		
+		send[3] = (data&0xff00) >> 8 ;
+		send[4] = data&0xff;	
 		ret = hcsr501_check();
+		send[5] = ret;
 		delay_ms(500);
 		
-		switch(cmd)
-		{
-			case 'a':led_on();cmd = 0;break;
-			case 'b':led_off();cmd = 0;break;
-			case TEMP_FLAG:USART_SendByte(USART1,temp);cmd = 0; break;
-			case HUMI_FLAG:USART_SendByte(USART1,humi);cmd = 0; break;
-			case SQ_FLAG:USART_SendHalfWord(USART1,get_adc_value());cmd = 0; break;
-			case HCSR_FLAG:USART_SendData(USART1,ret);cmd = 0; break;
-			default : break;
-		}
+		Usart_SendArray(USART1, send, 7);
 
 	}
 
@@ -84,6 +80,14 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
 		cmd = USART_ReceiveData(USART1);	//读取接收到的数据
+		if(cmd == 'a')
+		{
+			led_on();
+		}
+		if(cmd == 'b')
+		{
+			led_off();
+		}
 	}
 	USART_ClearITPendingBit(USART1,USART_IT_RXNE);
 }

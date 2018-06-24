@@ -40,6 +40,7 @@ void USART_SendByte(USART_TypeDef* USARTx,uint8_t data);    //发送一个字节
 /* 发送两个字节的数据 */
 void USART_SendHalfWord(USART_TypeDef* USARTx, uint16_t data);
 
+void Usart_SendArray( USART_TypeDef * pUSARTx, uint8_t *array, uint16_t num);
 
 
 #endif

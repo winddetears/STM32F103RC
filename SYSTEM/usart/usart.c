@@ -193,3 +193,17 @@ void USART_SendHalfWord(USART_TypeDef* USARTx, uint16_t data)
 	while( USART_GetFlagStatus(USARTx, USART_FLAG_TXE) == RESET );
 }
 
+void Usart_SendArray( USART_TypeDef * pUSARTx, uint8_t *array, uint16_t num)
+{
+  uint8_t i;
+	
+	for(i=0; i<num; i++)
+  {
+	    /* 发送一个字节数据到USART */
+	    USART_SendByte(pUSARTx,array[i]);	
+  
+  }
+	/* 等待发送完成 */
+	while(USART_GetFlagStatus(pUSARTx,USART_FLAG_TC)==RESET);
+}
+
